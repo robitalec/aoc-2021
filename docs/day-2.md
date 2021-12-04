@@ -109,7 +109,7 @@ horizontal_times_depth_with_aim <- function(DT) {
     DT[command == 'up', dist := dist * -1]
     DT[command != 'forward', aim := cumsum(dist)][, aim := nafill(aim, 'locf')]
     DT[command == 'forward', horizontal := cumsum(dist)]
-    DT[command == 'forward', depth := aim * dist][1, depth := 0]
+    DT[command == 'forward', depth := aim * dist][is.na(depth), depth := 0]
     DT[command == 'forward', depth := cumsum(depth)]
     DT[.N, horizontal * depth]
 }
@@ -124,7 +124,7 @@ chk_equal(
     900
 )
 
-horizontal_times_depth_with_aim(DT)[]
+horizontal_times_depth_with_aim(DT)
 ```
 
-    ## [1] NA
+    ## [1] 2101031224
