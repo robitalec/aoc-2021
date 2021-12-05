@@ -58,7 +58,6 @@ Consider only horizontal and vertical lines. At how many points do at least two 
 
 ```{r}
 library(data.table)
-library(sf)
 
 eg_DT <- fread('data/day-5-example-lines.txt', colClasses = 'character', 
 							 sep = '', header = FALSE)
@@ -66,45 +65,76 @@ DT <- fread('data/day-5-lines.txt', colClasses = 'character',
 							 sep = '', header = FALSE)
 point_cols <- c('start', 'end')
 
-prep_text_lines <- function(DT, point_cols) {
+prep_text_lines <- function(DT, point_cols, drop_diag = TRUE) {
 	DT[, (point_cols) := tstrsplit(V1, ' -> ')]
 	DT[, (paste0(point_cols[1], c('_X', '_Y'))) := 
 				tstrsplit(.SD[[1]], ',', type.convert = TRUE), .SDcols = point_cols[1]]
 	DT[, (paste0(point_cols[2], c('_X', '_Y'))) := 
 				tstrsplit(.SD[[1]], ',', type.convert = TRUE), .SDcols = point_cols[2]]
 	
-	no_diag <- DT[start_X == end_X | start_Y == end_Y]
+	if (drop_diag) {
+		DT <- DT[start_X == end_X | start_Y == end_Y]
+	}
 	
-	coords <- grep('start_|end_', colnames(no_diag), value = TRUE)
-	setorderv(no_diag, coords)
-}
-
-dt_to_lines <- function(DT) {
 	coords <- grep('start_|end_', colnames(DT), value = TRUE)
-
-	st_as_sf(do.call(
-		st_sfc,
-		lapply(seq.int(nrow(DT)), function(i) {
-			st_linestring(
-				matrix(
-					as.matrix(
-						DT[i, .SD, .SDcols = coords]), ncol = 2, byrow = TRUE)
-			)
-		})
-	))
+	setorderv(DT, coords)
 }
-count_overlap <- function(lines, min_n) {
-	# grd <- st_as_sf(st_make_grid(lines, cellsize = 1))
-	# inter <- st_join(lines, grd, join = st_intersects)
-	# sum(vapply(st_intersects(grd, lines), length, 42)  >= min_n)
-	sum(vapply(st_intersects(lines, lines), length, 42)  >= min_n)
+
+count_by_point <- function(DT) {
+	rbindlist(lapply(seq.int(nrow(DT)), function(i) {
+		if (DT[i, start_X < end_X]) {
+			sign_X <- 1
+		} else {
+			sign_X <- -1
+		}
+		if (DT[i, start_Y < end_Y]) {
+			sign_Y <- 1
+		} else {
+			sign_Y <- -1
+		}
+		DT[i, .(X = seq(from = start_X, to = end_X, by = 1 * sign_X),
+						Y = seq(from = start_Y, to = end_Y, by = 1 * sign_Y))]
+	}))[, .N, .(X, Y)][N > 1, .N]
 }
 
 prep_eg_DT <- prep_text_lines(eg_DT, point_cols)
-eg_lines <- dt_to_lines(prep_eg_DT)
-count_overlap(eg_lines, 2)
+count_by_point(prep_eg_DT)
 
 prep_DT <- prep_text_lines(DT, point_cols)
-DT_lines <- dt_to_lines(prep_DT)
-count_overlap(DT_lines, 2)
+count_by_point(prep_DT)
+```
+
+## Part two
+Unfortunately, considering only horizontal and vertical lines doesn't give you the full picture; you need to also consider diagonal lines.
+
+Because of the limits of the hydrothermal vent mapping system, the lines in your list will only ever be horizontal, vertical, or a diagonal line at exactly 45 degrees. In other words:
+
+* An entry like 1,1 -> 3,3 covers points 1,1, 2,2, and 3,3.
+* An entry like 9,7 -> 7,9 covers points 9,7, 8,8, and 7,9.
+
+Considering all lines from the above example would now produce the following diagram:
+
+```
+1.1....11.
+.111...2..
+..2.1.111.
+...1.2.2..
+.112313211
+...1.2....
+..1...1...
+.1.....1..
+1.......1.
+222111....
+```
+
+You still need to determine the number of points where at least two lines overlap. In the above example, this is still anywhere in the diagram with a 2 or larger - now a total of 12 points.
+
+Consider all of the lines. At how many points do at least two lines overlap?
+
+```{r}
+prep_eg_DT <- prep_text_lines(eg_DT, point_cols, drop_diag = FALSE)
+count_by_point(prep_eg_DT)
+
+prep_DT <- prep_text_lines(DT, point_cols, drop_diag = FALSE)
+count_by_point(prep_DT)
 ```
