@@ -58,6 +58,7 @@ Consider only horizontal and vertical lines. At how many points do at least two 
 
 ```{r}
 library(data.table)
+library(chk)
 
 eg_DT <- fread('data/day-5-example-lines.txt', colClasses = 'character', 
 							 sep = '', header = FALSE)
@@ -97,8 +98,12 @@ count_by_point <- function(DT) {
 	}))[, .N, .(X, Y)][N > 1, .N]
 }
 
-prep_eg_DT <- prep_text_lines(eg_DT, point_cols)
-count_by_point(prep_eg_DT)
+chk_equal({
+	prep_eg_DT <- prep_text_lines(eg_DT, point_cols)
+	count_by_point(prep_eg_DT)
+	},
+	5
+)
 
 prep_DT <- prep_text_lines(DT, point_cols)
 count_by_point(prep_DT)
@@ -132,8 +137,12 @@ You still need to determine the number of points where at least two lines overla
 Consider all of the lines. At how many points do at least two lines overlap?
 
 ```{r}
-prep_eg_DT <- prep_text_lines(eg_DT, point_cols, drop_diag = FALSE)
-count_by_point(prep_eg_DT)
+chk_equal({
+	prep_eg_DT <- prep_text_lines(eg_DT, point_cols, drop_diag = FALSE)
+	count_by_point(prep_eg_DT)
+	},
+	12
+)
 
 prep_DT <- prep_text_lines(DT, point_cols, drop_diag = FALSE)
 count_by_point(prep_DT)

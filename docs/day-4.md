@@ -74,6 +74,7 @@ will win first. What will your final score be if you choose that board?
 
 ``` r
 library(data.table)
+library(chk)
 
 # Data
 eg_draws <- c(7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 24, 10, 16, 13, 6,
@@ -128,14 +129,14 @@ sum_win <- function(wins, cards, draws, strategy = 'min') {
 }
 
 # Processing
-eg_cards <- split_cards(eg_DT, 5L)
-eg_wins <- vapply(eg_cards, find_win, eg_draws, FUN.VALUE = 42)
-sum_win(eg_wins, eg_cards, eg_draws)
-```
+chk_equal({
+    eg_cards <- split_cards(eg_DT, 5L)
+    eg_wins <- vapply(eg_cards, find_win, eg_draws, FUN.VALUE = 42)
+    sum_win(eg_wins, eg_cards, eg_draws)
+    },
+    4512
+)
 
-    ## [1] 4512
-
-``` r
 cards <- split_cards(DT, 5L)
 wins <- vapply(cards, find_win, draws, FUN.VALUE = 42)
 sum_win(wins, cards, draws)
@@ -164,12 +165,10 @@ score be?
 
 ``` r
 # Processing
-sum_win(eg_wins, eg_cards, eg_draws, strategy = 'max')
-```
-
-    ## [1] 1924
-
-``` r
+chk_equal(
+    sum_win(eg_wins, eg_cards, eg_draws, strategy = 'max'),
+    1924
+)
 sum_win(wins, cards, draws, strategy = 'max')
 ```
 

@@ -43,8 +43,19 @@ The most common value of the third, fourth, and fifth bits are 1, 1, and
 
 So, the gamma rate is the binary number 10110, or 22 in decimal.
 
+The epsilon rate is calculated in a similar way; rather than use the
+most common bit, the least common bit from each position is used. So,
+the epsilon rate is 01001, or 9 in decimal. Multiplying the gamma rate
+(22) by the epsilon rate (9) produces the power consumption, 198.
+
+Use the binary numbers in your diagnostic report to calculate the gamma
+rate and epsilon rate, then multiply them together. What is the power
+consumption of the submarine? (Be sure to represent your answer in
+decimal, not binary.)
+
 ``` r
 library(data.table)
+library(chk)
 
 eg_DT <- fread('data/day-3-example.txt', colClasses = 'character')
 DT <- fread('data/day-3-report.txt', colClasses = 'character')
@@ -74,12 +85,11 @@ epsilon_rate <- function(DT, nbits = 5L) {
     binary_to_decimal(chars)
 }
 
-gamma_rate(eg_DT, nbits = 5) * epsilon_rate(eg_DT, nbits = 5)
-```
+chk_equal(
+    gamma_rate(eg_DT, nbits = 5) * epsilon_rate(eg_DT, nbits = 5),
+    198
+)
 
-    ## [1] 198
-
-``` r
 gamma_rate(DT, nbits = 12) * epsilon_rate(DT, nbits = 12)
 ```
 
@@ -191,12 +201,12 @@ c02_scrubber_rating <- function(DT, nbits = 5L) {
     chars <- subs[is.na(rm), as.character(.SD), .SDcols = patterns('V')]
     binary_to_decimal(chars)
 }
-oxygen_gen_rating(eg_DT, 5L) * c02_scrubber_rating(eg_DT, 5L)
-```
 
-    ## [1] 230
+chk_equal(
+    oxygen_gen_rating(eg_DT, 5L) * c02_scrubber_rating(eg_DT, 5L),
+    230
+)
 
-``` r
 oxygen_gen_rating(DT, 12L) * c02_scrubber_rating(DT, 12L)
 ```
 

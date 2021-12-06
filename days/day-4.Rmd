@@ -72,6 +72,7 @@ To guarantee victory against the giant squid, figure out which board will win fi
 
 ```{r}
 library(data.table)
+library(chk)
 
 # Data
 eg_draws <- c(7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 24, 10, 16, 13, 6,
@@ -126,9 +127,13 @@ sum_win <- function(wins, cards, draws, strategy = 'min') {
 }
 
 # Processing
-eg_cards <- split_cards(eg_DT, 5L)
-eg_wins <- vapply(eg_cards, find_win, eg_draws, FUN.VALUE = 42)
-sum_win(eg_wins, eg_cards, eg_draws)
+chk_equal({
+	eg_cards <- split_cards(eg_DT, 5L)
+	eg_wins <- vapply(eg_cards, find_win, eg_draws, FUN.VALUE = 42)
+	sum_win(eg_wins, eg_cards, eg_draws)
+	},
+	4512
+)
 
 cards <- split_cards(DT, 5L)
 wins <- vapply(cards, find_win, draws, FUN.VALUE = 42)
@@ -147,6 +152,9 @@ Figure out which board will win last. Once it wins, what would its final score b
 
 ```{r}
 # Processing
-sum_win(eg_wins, eg_cards, eg_draws, strategy = 'max')
+chk_equal(
+	sum_win(eg_wins, eg_cards, eg_draws, strategy = 'max'),
+	1924
+)
 sum_win(wins, cards, draws, strategy = 'max')
 ```

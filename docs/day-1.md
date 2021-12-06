@@ -50,18 +50,16 @@ How many measurements are larger than the previous measurement?
 
 ``` r
 library(data.table)
+library(chk)
 
-# Example
 eg_DT <- data.table(x = c(199, 200, 208, 210, 200, 207, 240, 269, 260, 263))
-eg_DT[, sum(x < shift(x, type = 'lead'), na.rm = TRUE)]
-```
-
-    ## [1] 7
-
-``` r
-# Provided input
-
 DT <- fread('data/day-1-sonar-sweep.csv')
+
+chk_equal(
+    eg_DT[, sum(x < shift(x, type = 'lead'), na.rm = TRUE)],
+    7
+)
+
 DT[, sum(x < shift(x, type = 'lead'), na.rm = TRUE)]
 ```
 
@@ -115,18 +113,14 @@ Consider sums of a three-measurement sliding window. How many sums are
 larger than the previous sum?
 
 ``` r
-library(data.table)
-library(RcppRoll)
+chk_equal(
+    eg_DT[, sum(frollsum(x, 3) <  
+                                frollsum(shift(x, type = 'lead'), 3), 
+                            na.rm = TRUE)],
+    5
+)
 
-# Example 
-eg_DT[, sum(roll_sum(x, 3) <  roll_sum(shift(x, type = 'lead'), 3), na.rm = TRUE)]
+DT[, sum(x < shift(x, type = 'lead'), na.rm = TRUE)]
 ```
 
-    ## [1] 5
-
-``` r
-# Provided input
-DT[, sum(roll_sum(x, 3) <  roll_sum(shift(x, type = 'lead'), 3), na.rm = TRUE)]
-```
-
-    ## [1] 1597
+    ## [1] 1553
