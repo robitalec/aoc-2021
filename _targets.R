@@ -5,7 +5,8 @@ source('R/packages.R')
 c(
 	tar_target(
 		rmds,
-		dir('days', '.Rmd', full.names = TRUE)
+		dir('days', '.Rmd', full.names = TRUE),
+		cue = tar_cue('always')
 	),
 	tar_target(
 		rmd,

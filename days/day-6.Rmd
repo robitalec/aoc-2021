@@ -93,7 +93,7 @@ count_total <- function(init, t_steps, transitions) {
 	t <- 1
 	while(t != t_steps) {
 		t <- t + 1
-		a <- m %*% a
+		a <- transitions %*% a
 	}
 	sum(a)
 }
@@ -103,13 +103,13 @@ chk_equal({
 	init <- c(0, 0, 0, 0, 1, 2, 1, 1, 0)
 	count_total(init, 18, get_transitions())
 	},
-	28
+	26
 )
 
 chk_equal({
 	init <- c(0, 0, 0, 0, 1, 2, 1, 1, 0)
 	count_total(init, 80, get_transitions())
-	}
+	},
 	5934
 )
 
@@ -130,5 +130,3 @@ After 256 days in the example above, there would be a total of 26984457539 lante
 ```{r}
 options(scipen = 99)
 count_total(tabbed, 256, get_transitions())
-
-```
