@@ -106,7 +106,5 @@ chk_equal(
 	5
 )
 
-DT <- as.integer(strsplit(readLines('data/day-7-start.txt'), ',')[[1]])
 find_cumulative_distance(DT)[sum_dist == min(sum_dist), sum_dist]
-
 ```
