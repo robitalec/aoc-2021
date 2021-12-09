@@ -63,7 +63,7 @@ In this example, after 18 days, there are a total of 26 fish. After 80 days, the
 Find a way to simulate lanternfish. How many lanternfish would there be after 80 days?
 
 ```{r}
-library(chk)
+library(tinytest)
 
 get_transitions <- function() {
 	m <- matrix(0, nrow = 9, ncol = 9)
@@ -99,14 +99,14 @@ count_total <- function(init, t_steps, transitions) {
 }
 
 
-chk_equal({
+expect_equal({
 	init <- c(0, 0, 0, 0, 1, 2, 1, 1, 0)
 	count_total(init, 18, get_transitions())
 	},
 	26
 )
 
-chk_equal({
+expect_equal({
 	init <- c(0, 0, 0, 0, 1, 2, 1, 1, 0)
 	count_total(init, 80, get_transitions())
 	},

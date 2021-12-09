@@ -80,7 +80,7 @@ fgae cfgab fg bagce</code></pre>
 <p>Because the digits 1, 4, 7, and 8 each use a unique number of segments, you should be able to tell which combinations of signals correspond to those digits. Counting only digits in the output values (the part after | on each line), in the above example, there are 26 instances of digits that use a unique number of segments (highlighted above).</p>
 <p>In the output values, how many times do digits 1, 4, 7, or 8 appear?</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(chk)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tinytest)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>example <span class="ot">&lt;-</span> <span class="fu">readLines</span>(<span class="st">&#39;data/day-8-example.txt&#39;</span>)</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>seq_ex <span class="ot">&lt;-</span> <span class="fu">seq.int</span>(<span class="fu">length</span>(example))</span>
@@ -99,12 +99,13 @@ fgae cfgab fg bagce</code></pre>
 <span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    DT[, <span class="fu">sum</span>(<span class="fu">unlist</span>(nchar_output) <span class="sc">%in%</span> lens)]</span>
 <span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="fu">chk_equal</span>(</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="fu">expect_equal</span>(</span>
 <span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">check_nchar_match</span>(eg_DT, single_numb),</span>
 <span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="dv">26</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="fu">check_nchar_match</span>(DT, single_numb)</span></code></pre></div>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## ----- PASSED      : &lt;--&gt;
+##  call| eval(expr = expr, envir = envir)</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_nchar_match</span>(DT, single_numb)</span></code></pre></div>
 <pre><code>## [1] 521</code></pre>
 <h2 id="part-two">Part two</h2>
 <p>Through a little deduction, you should now be able to determine the remaining digits. Consider again the first example above:</p>
@@ -148,81 +149,82 @@ cdfeb fcadb cdfeb cdbaf</code></pre>
 </ul>
 <p>Adding all of the output values in this larger example produces 61229.</p>
 <p>For each entry, determine all of the wire/segment connections and decode the four-digit output values. What do you get if you add up all of the output values?</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mgsub)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>numbs <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;0&#39;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;a&#39;</span>, <span class="st">&#39;b&#39;</span>,  <span class="st">&#39;c&#39;</span>, <span class="st">&#39;e&#39;</span>, <span class="st">&#39;f&#39;</span>, <span class="st">&#39;g&#39;</span>),</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;1&#39;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;c&#39;</span>, <span class="st">&#39;f&#39;</span>),</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;2&#39;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;a&#39;</span>, <span class="st">&#39;c&#39;</span>,  <span class="st">&#39;d&#39;</span>, <span class="st">&#39;e&#39;</span>, <span class="st">&#39;g&#39;</span>),</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;3&#39;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;a&#39;</span>, <span class="st">&#39;c&#39;</span>,  <span class="st">&#39;d&#39;</span>, <span class="st">&#39;f&#39;</span>, <span class="st">&#39;g&#39;</span>),</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;4&#39;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;b&#39;</span>, <span class="st">&#39;c&#39;</span>,  <span class="st">&#39;d&#39;</span>, <span class="st">&#39;f&#39;</span>),</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;5&#39;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;a&#39;</span>, <span class="st">&#39;b&#39;</span>,  <span class="st">&#39;d&#39;</span>, <span class="st">&#39;f&#39;</span>, <span class="st">&#39;g&#39;</span>),</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;6&#39;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;a&#39;</span>, <span class="st">&#39;b&#39;</span>,  <span class="st">&#39;d&#39;</span>, <span class="st">&#39;e&#39;</span>, <span class="st">&#39;f&#39;</span>, <span class="st">&#39;g&#39;</span>),</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;7&#39;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;a&#39;</span>, <span class="st">&#39;c&#39;</span>, <span class="st">&#39;f&#39;</span>),</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;8&#39;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;a&#39;</span>, <span class="st">&#39;b&#39;</span>,  <span class="st">&#39;c&#39;</span>, <span class="st">&#39;d&#39;</span>, <span class="st">&#39;e&#39;</span>, <span class="st">&#39;f&#39;</span>, <span class="st">&#39;g&#39;</span>),</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;9&#39;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;a&#39;</span>, <span class="st">&#39;b&#39;</span>,  <span class="st">&#39;c&#39;</span>, <span class="st">&#39;d&#39;</span>, <span class="st">&#39;f&#39;</span>, <span class="st">&#39;g&#39;</span>)</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>displays <span class="ot">&lt;-</span> <span class="fu">data.table</span>(</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">numb =</span> <span class="fu">names</span>(numbs)</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>)[, signal <span class="sc">:</span><span class="er">=</span> <span class="fu">list</span>(numbs[numb])]</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>displays[, sorted_signal <span class="sc">:</span><span class="er">=</span> <span class="fu">vapply</span>(signal, paste, <span class="at">collapse =</span> <span class="st">&#39;&#39;</span>, <span class="st">&#39;potato&#39;</span>)]</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>displays[, len <span class="sc">:</span><span class="er">=</span> <span class="fu">vapply</span>(signal, length, <span class="dv">42</span>)][, n_len <span class="sc">:</span><span class="er">=</span> .N, len]</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>sort_string <span class="ot">&lt;-</span> <span class="cf">function</span>(string) {</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">vapply</span>(<span class="fu">strsplit</span>(string, <span class="cn">NULL</span>), <span class="cf">function</span>(string) <span class="fu">paste</span>(<span class="fu">sort</span>(string), <span class="at">collapse =</span> <span class="st">&#39;&#39;</span>), <span class="st">&#39;&#39;</span>)</span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>decode_signal <span class="ot">&lt;-</span> <span class="cf">function</span>(signal) {</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    ind_sigs <span class="ot">&lt;-</span> <span class="fu">strsplit</span>(signal, <span class="st">&#39; &#39;</span>)[[<span class="dv">1</span>]]</span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    split_sig <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(ind_sigs, strsplit, <span class="st">&#39;&#39;</span>))</span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    sig_letters <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">sig_letter =</span> split_sig)[, .N, sig_letter]</span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Instead of finding the signals from the code, just look at the </span></span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># number of times we expect each letter to be repeated in the signal</span></span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># eg. the &#39;e&#39; position should only be repeated 4 times</span></span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    count_in_letters <span class="ot">&lt;-</span> <span class="fu">data.table</span>(</span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>        <span class="at">letter =</span> <span class="fu">c</span>(<span class="st">&#39;a&#39;</span>, <span class="st">&#39;b&#39;</span>, <span class="st">&#39;c&#39;</span>, <span class="st">&#39;d&#39;</span>, <span class="st">&#39;e&#39;</span>, <span class="st">&#39;f&#39;</span>, <span class="st">&#39;g&#39;</span>),</span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>        <span class="at">N =</span> <span class="fu">c</span>(<span class="dv">8</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">7</span>, <span class="dv">4</span>, <span class="dv">9</span>, <span class="dv">7</span>)</span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>    )[, N_by_N <span class="sc">:</span><span class="er">=</span> .N, N]</span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    only_unique <span class="ot">&lt;-</span> count_in_letters[N_by_N <span class="sc">==</span> <span class="dv">1</span>]</span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>    sig_letters[only_unique, letter <span class="sc">:</span><span class="er">=</span> letter, on <span class="ot">=</span> <span class="st">&#39;N&#39;</span>]</span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Using the short 2 character signal, distinguish between c and a</span></span>
-<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>    sig_letters[<span class="fu">is.na</span>(letter) <span class="sc">&amp;</span> sig_letter <span class="sc">%in%</span> </span>
-<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">strsplit</span>(ind_sigs[<span class="fu">vapply</span>(ind_sigs, nchar, <span class="dv">42</span>) <span class="sc">==</span> <span class="dv">2</span>], <span class="st">&#39;&#39;</span>)[[<span class="dv">1</span>]],</span>
-<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>                            letter <span class="sc">:</span><span class="er">=</span> <span class="st">&#39;c&#39;</span>]</span>
-<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>    sig_letters[<span class="fu">is.na</span>(letter) <span class="sc">&amp;</span> N <span class="sc">==</span> <span class="dv">8</span>, letter <span class="sc">:</span><span class="er">=</span> <span class="st">&#39;a&#39;</span>]</span>
-<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Using the 4 character signal, distinguish between d and g</span></span>
-<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>    sig_letters[<span class="fu">is.na</span>(letter) <span class="sc">&amp;</span> sig_letter <span class="sc">%in%</span> </span>
-<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">strsplit</span>(ind_sigs[<span class="fu">vapply</span>(ind_sigs, nchar, <span class="dv">42</span>) <span class="sc">==</span> <span class="dv">4</span>], <span class="st">&#39;&#39;</span>)[[<span class="dv">1</span>]],</span>
-<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>                            letter <span class="sc">:</span><span class="er">=</span> <span class="st">&#39;d&#39;</span>]</span>
-<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>    sig_letters[<span class="fu">is.na</span>(letter) <span class="sc">&amp;</span> N <span class="sc">==</span> <span class="dv">7</span>, letter <span class="sc">:</span><span class="er">=</span> <span class="st">&#39;g&#39;</span>]</span>
-<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(sig_letters) </span>
-<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>parse_output <span class="ot">&lt;-</span> <span class="cf">function</span>(decoded, output, key) {</span>
-<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>    sorted <span class="ot">&lt;-</span> <span class="fu">vapply</span>(<span class="fu">strsplit</span>(output, <span class="st">&#39; &#39;</span>)[[<span class="dv">1</span>]], <span class="cf">function</span>(x) {</span>
-<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sort_string</span>(<span class="fu">mgsub</span>(x, decoded<span class="sc">$</span>sig_letter, decoded<span class="sc">$</span>letter))</span>
-<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>    }, <span class="st">&#39;potato&#39;</span>)</span>
-<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>    m <span class="ot">&lt;-</span> <span class="fu">merge</span>(<span class="fu">data.table</span>(<span class="at">sorted_signal =</span> sorted), displays, <span class="at">by =</span> <span class="st">&#39;sorted_signal&#39;</span>,</span>
-<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>                         <span class="at">sort =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>    m[, <span class="fu">as.integer</span>(<span class="fu">paste0</span>(numb, <span class="at">collapse =</span> <span class="st">&#39;&#39;</span>))]</span>
-<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>calc_sum_outputs <span class="ot">&lt;-</span> <span class="cf">function</span>(DT, key) {</span>
-<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>    DT[, <span class="fu">parse_output</span>(<span class="fu">decode_signal</span>(signal), output, key), by <span class="ot">=</span> output][, <span class="fu">sum</span>(V1)]</span>
-<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a><span class="fu">chk_equal</span>(</span>
-<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>    <span class="fu">calc_sum_outputs</span>(eg_DT, displays),</span>
-<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>    <span class="dv">61229</span></span>
-<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a><span class="fu">calc_sum_outputs</span>(DT, displays)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mgsub)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>numbs <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;0&#39;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;a&#39;</span>, <span class="st">&#39;b&#39;</span>,  <span class="st">&#39;c&#39;</span>, <span class="st">&#39;e&#39;</span>, <span class="st">&#39;f&#39;</span>, <span class="st">&#39;g&#39;</span>),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;1&#39;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;c&#39;</span>, <span class="st">&#39;f&#39;</span>),</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;2&#39;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;a&#39;</span>, <span class="st">&#39;c&#39;</span>,  <span class="st">&#39;d&#39;</span>, <span class="st">&#39;e&#39;</span>, <span class="st">&#39;g&#39;</span>),</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;3&#39;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;a&#39;</span>, <span class="st">&#39;c&#39;</span>,  <span class="st">&#39;d&#39;</span>, <span class="st">&#39;f&#39;</span>, <span class="st">&#39;g&#39;</span>),</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;4&#39;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;b&#39;</span>, <span class="st">&#39;c&#39;</span>,  <span class="st">&#39;d&#39;</span>, <span class="st">&#39;f&#39;</span>),</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;5&#39;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;a&#39;</span>, <span class="st">&#39;b&#39;</span>,  <span class="st">&#39;d&#39;</span>, <span class="st">&#39;f&#39;</span>, <span class="st">&#39;g&#39;</span>),</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;6&#39;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;a&#39;</span>, <span class="st">&#39;b&#39;</span>,  <span class="st">&#39;d&#39;</span>, <span class="st">&#39;e&#39;</span>, <span class="st">&#39;f&#39;</span>, <span class="st">&#39;g&#39;</span>),</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;7&#39;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;a&#39;</span>, <span class="st">&#39;c&#39;</span>, <span class="st">&#39;f&#39;</span>),</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;8&#39;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;a&#39;</span>, <span class="st">&#39;b&#39;</span>,  <span class="st">&#39;c&#39;</span>, <span class="st">&#39;d&#39;</span>, <span class="st">&#39;e&#39;</span>, <span class="st">&#39;f&#39;</span>, <span class="st">&#39;g&#39;</span>),</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;9&#39;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;a&#39;</span>, <span class="st">&#39;b&#39;</span>,  <span class="st">&#39;c&#39;</span>, <span class="st">&#39;d&#39;</span>, <span class="st">&#39;f&#39;</span>, <span class="st">&#39;g&#39;</span>)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>displays <span class="ot">&lt;-</span> <span class="fu">data.table</span>(</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">numb =</span> <span class="fu">names</span>(numbs)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>)[, signal <span class="sc">:</span><span class="er">=</span> <span class="fu">list</span>(numbs[numb])]</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>displays[, sorted_signal <span class="sc">:</span><span class="er">=</span> <span class="fu">vapply</span>(signal, paste, <span class="at">collapse =</span> <span class="st">&#39;&#39;</span>, <span class="st">&#39;potato&#39;</span>)]</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>displays[, len <span class="sc">:</span><span class="er">=</span> <span class="fu">vapply</span>(signal, length, <span class="dv">42</span>)][, n_len <span class="sc">:</span><span class="er">=</span> .N, len]</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>sort_string <span class="ot">&lt;-</span> <span class="cf">function</span>(string) {</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">vapply</span>(<span class="fu">strsplit</span>(string, <span class="cn">NULL</span>), <span class="cf">function</span>(string) <span class="fu">paste</span>(<span class="fu">sort</span>(string), <span class="at">collapse =</span> <span class="st">&#39;&#39;</span>), <span class="st">&#39;&#39;</span>)</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>decode_signal <span class="ot">&lt;-</span> <span class="cf">function</span>(signal) {</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>    ind_sigs <span class="ot">&lt;-</span> <span class="fu">strsplit</span>(signal, <span class="st">&#39; &#39;</span>)[[<span class="dv">1</span>]]</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>    split_sig <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(ind_sigs, strsplit, <span class="st">&#39;&#39;</span>))</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    sig_letters <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">sig_letter =</span> split_sig)[, .N, sig_letter]</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Instead of finding the signals from the code, just look at the </span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># number of times we expect each letter to be repeated in the signal</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># eg. the &#39;e&#39; position should only be repeated 4 times</span></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>    count_in_letters <span class="ot">&lt;-</span> <span class="fu">data.table</span>(</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>        <span class="at">letter =</span> <span class="fu">c</span>(<span class="st">&#39;a&#39;</span>, <span class="st">&#39;b&#39;</span>, <span class="st">&#39;c&#39;</span>, <span class="st">&#39;d&#39;</span>, <span class="st">&#39;e&#39;</span>, <span class="st">&#39;f&#39;</span>, <span class="st">&#39;g&#39;</span>),</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>        <span class="at">N =</span> <span class="fu">c</span>(<span class="dv">8</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">7</span>, <span class="dv">4</span>, <span class="dv">9</span>, <span class="dv">7</span>)</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>    )[, N_by_N <span class="sc">:</span><span class="er">=</span> .N, N]</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>    only_unique <span class="ot">&lt;-</span> count_in_letters[N_by_N <span class="sc">==</span> <span class="dv">1</span>]</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>    sig_letters[only_unique, letter <span class="sc">:</span><span class="er">=</span> letter, on <span class="ot">=</span> <span class="st">&#39;N&#39;</span>]</span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Using the short 2 character signal, distinguish between c and a</span></span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>    sig_letters[<span class="fu">is.na</span>(letter) <span class="sc">&amp;</span> sig_letter <span class="sc">%in%</span> </span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">strsplit</span>(ind_sigs[<span class="fu">vapply</span>(ind_sigs, nchar, <span class="dv">42</span>) <span class="sc">==</span> <span class="dv">2</span>], <span class="st">&#39;&#39;</span>)[[<span class="dv">1</span>]],</span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>                            letter <span class="sc">:</span><span class="er">=</span> <span class="st">&#39;c&#39;</span>]</span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>    sig_letters[<span class="fu">is.na</span>(letter) <span class="sc">&amp;</span> N <span class="sc">==</span> <span class="dv">8</span>, letter <span class="sc">:</span><span class="er">=</span> <span class="st">&#39;a&#39;</span>]</span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Using the 4 character signal, distinguish between d and g</span></span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>    sig_letters[<span class="fu">is.na</span>(letter) <span class="sc">&amp;</span> sig_letter <span class="sc">%in%</span> </span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">strsplit</span>(ind_sigs[<span class="fu">vapply</span>(ind_sigs, nchar, <span class="dv">42</span>) <span class="sc">==</span> <span class="dv">4</span>], <span class="st">&#39;&#39;</span>)[[<span class="dv">1</span>]],</span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>                            letter <span class="sc">:</span><span class="er">=</span> <span class="st">&#39;d&#39;</span>]</span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>    sig_letters[<span class="fu">is.na</span>(letter) <span class="sc">&amp;</span> N <span class="sc">==</span> <span class="dv">7</span>, letter <span class="sc">:</span><span class="er">=</span> <span class="st">&#39;g&#39;</span>]</span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(sig_letters) </span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a>parse_output <span class="ot">&lt;-</span> <span class="cf">function</span>(decoded, output, key) {</span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a>    sorted <span class="ot">&lt;-</span> <span class="fu">vapply</span>(<span class="fu">strsplit</span>(output, <span class="st">&#39; &#39;</span>)[[<span class="dv">1</span>]], <span class="cf">function</span>(x) {</span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sort_string</span>(<span class="fu">mgsub</span>(x, decoded<span class="sc">$</span>sig_letter, decoded<span class="sc">$</span>letter))</span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a>    }, <span class="st">&#39;potato&#39;</span>)</span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a>    m <span class="ot">&lt;-</span> <span class="fu">merge</span>(<span class="fu">data.table</span>(<span class="at">sorted_signal =</span> sorted), displays, <span class="at">by =</span> <span class="st">&#39;sorted_signal&#39;</span>,</span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a>                         <span class="at">sort =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a>    m[, <span class="fu">as.integer</span>(<span class="fu">paste0</span>(numb, <span class="at">collapse =</span> <span class="st">&#39;&#39;</span>))]</span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a>calc_sum_outputs <span class="ot">&lt;-</span> <span class="cf">function</span>(DT, key) {</span>
+<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a>    DT[, <span class="fu">parse_output</span>(<span class="fu">decode_signal</span>(signal), output, key), by <span class="ot">=</span> output][, <span class="fu">sum</span>(V1)]</span>
+<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a><span class="fu">expect_equal</span>(</span>
+<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a>    <span class="fu">calc_sum_outputs</span>(eg_DT, displays),</span>
+<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a>    <span class="dv">61229</span></span>
+<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## ----- PASSED      : &lt;--&gt;
+##  call| eval(expr = expr, envir = envir)</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">calc_sum_outputs</span>(DT, displays)</span></code></pre></div>
 <pre><code>## [1] 1016804</code></pre>
 
 </body>

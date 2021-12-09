@@ -1,3 +1,3 @@
 library(data.table)
 library(rmarkdown)
-library(chk)
+library(tinytest)

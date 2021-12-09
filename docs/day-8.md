@@ -114,7 +114,7 @@ In the output values, how many times do digits 1, 4, 7, or 8 appear?
 
 ``` r
 library(data.table)
-library(chk)
+library(tinytest)
 
 example <- readLines('data/day-8-example.txt')
 seq_ex <- seq.int(length(example))
@@ -133,11 +133,16 @@ check_nchar_match <- function(DT, lens) {
     DT[, sum(unlist(nchar_output) %in% lens)]
 }
 
-chk_equal(
+expect_equal(
     check_nchar_match(eg_DT, single_numb),
     26
 )
+```
 
+    ## ----- PASSED      : <-->
+    ##  call| eval(expr = expr, envir = envir)
+
+``` r
 check_nchar_match(DT, single_numb)
 ```
 
@@ -268,11 +273,16 @@ calc_sum_outputs <- function(DT, key) {
 }
 
 
-chk_equal(
+expect_equal(
     calc_sum_outputs(eg_DT, displays),
     61229
 )
+```
 
+    ## ----- PASSED      : <-->
+    ##  call| eval(expr = expr, envir = envir)
+
+``` r
 calc_sum_outputs(DT, displays)
 ```
 

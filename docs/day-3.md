@@ -55,7 +55,7 @@ decimal, not binary.)
 
 ``` r
 library(data.table)
-library(chk)
+library(tinytest)
 
 eg_DT <- fread('data/day-3-example.txt', colClasses = 'character')
 DT <- fread('data/day-3-report.txt', colClasses = 'character')
@@ -85,11 +85,16 @@ epsilon_rate <- function(DT, nbits = 5L) {
     binary_to_decimal(chars)
 }
 
-chk_equal(
+expect_equal(
     gamma_rate(eg_DT, nbits = 5) * epsilon_rate(eg_DT, nbits = 5),
     198
 )
+```
 
+    ## ----- PASSED      : <-->
+    ##  call| eval(expr = expr, envir = envir)
+
+``` r
 gamma_rate(DT, nbits = 12) * epsilon_rate(DT, nbits = 12)
 ```
 
@@ -202,11 +207,16 @@ c02_scrubber_rating <- function(DT, nbits = 5L) {
     binary_to_decimal(chars)
 }
 
-chk_equal(
+expect_equal(
     oxygen_gen_rating(eg_DT, 5L) * c02_scrubber_rating(eg_DT, 5L),
     230
 )
+```
 
+    ## ----- PASSED      : <-->
+    ##  call| eval(expr = expr, envir = envir)
+
+``` r
 oxygen_gen_rating(DT, 12L) * c02_scrubber_rating(DT, 12L)
 ```
 

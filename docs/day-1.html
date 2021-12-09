@@ -54,17 +54,18 @@ body {
 <p>In this example, there are 7 measurements that are larger than the previous measurement.</p>
 <p>How many measurements are larger than the previous measurement?</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(chk)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tinytest)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>eg_DT <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">199</span>, <span class="dv">200</span>, <span class="dv">208</span>, <span class="dv">210</span>, <span class="dv">200</span>, <span class="dv">207</span>, <span class="dv">240</span>, <span class="dv">269</span>, <span class="dv">260</span>, <span class="dv">263</span>))</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>DT <span class="ot">&lt;-</span> <span class="fu">fread</span>(<span class="st">&#39;data/day-1-sonar-sweep.csv&#39;</span>)</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">chk_equal</span>(</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">expect_equal</span>(</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    eg_DT[, <span class="fu">sum</span>(x <span class="sc">&lt;</span> <span class="fu">shift</span>(x, <span class="at">type =</span> <span class="st">&#39;lead&#39;</span>), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)],</span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="dv">7</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>DT[, <span class="fu">sum</span>(x <span class="sc">&lt;</span> <span class="fu">shift</span>(x, <span class="at">type =</span> <span class="st">&#39;lead&#39;</span>), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)]</span></code></pre></div>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## ----- PASSED      : &lt;--&gt;
+##  call| eval(expr = expr, envir = envir)</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>DT[, <span class="fu">sum</span>(x <span class="sc">&lt;</span> <span class="fu">shift</span>(x, <span class="at">type =</span> <span class="st">&#39;lead&#39;</span>), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)]</span></code></pre></div>
 <pre><code>## [1] 1553</code></pre>
 <h2 id="part-two">Part two</h2>
 <p>Considering every single measurement isn’t as useful as you expected: there’s just too much noise in the data.</p>
@@ -92,14 +93,15 @@ G: 769 (increased)
 H: 792 (increased)</code></pre>
 <p>In this example, there are 5 sums that are larger than the previous sum.</p>
 <p>Consider sums of a three-measurement sliding window. How many sums are larger than the previous sum?</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chk_equal</span>(</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    eg_DT[, <span class="fu">sum</span>(<span class="fu">frollsum</span>(x, <span class="dv">3</span>) <span class="sc">&lt;</span>  </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">frollsum</span>(<span class="fu">shift</span>(x, <span class="at">type =</span> <span class="st">&#39;lead&#39;</span>), <span class="dv">3</span>), </span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">na.rm =</span> <span class="cn">TRUE</span>)],</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">5</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>DT[, <span class="fu">sum</span>(x <span class="sc">&lt;</span> <span class="fu">shift</span>(x, <span class="at">type =</span> <span class="st">&#39;lead&#39;</span>), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)]</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">expect_equal</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    eg_DT[, <span class="fu">sum</span>(<span class="fu">frollsum</span>(x, <span class="dv">3</span>) <span class="sc">&lt;</span>  </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">frollsum</span>(<span class="fu">shift</span>(x, <span class="at">type =</span> <span class="st">&#39;lead&#39;</span>), <span class="dv">3</span>), </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">na.rm =</span> <span class="cn">TRUE</span>)],</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">5</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## ----- PASSED      : &lt;--&gt;
+##  call| eval(expr = expr, envir = envir)</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>DT[, <span class="fu">sum</span>(x <span class="sc">&lt;</span> <span class="fu">shift</span>(x, <span class="at">type =</span> <span class="st">&#39;lead&#39;</span>), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)]</span></code></pre></div>
 <pre><code>## [1] 1553</code></pre>
 
 </body>

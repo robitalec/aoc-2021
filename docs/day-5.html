@@ -59,7 +59,7 @@ body {
 <p>To avoid the most dangerous areas, you need to determine the number of points where at least two lines overlap. In the above example, this is anywhere in the diagram with a 2 or larger - a total of 5 points.</p>
 <p>Consider only horizontal and vertical lines. At how many points do at least two lines overlap?</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(chk)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tinytest)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>eg_DT <span class="ot">&lt;-</span> <span class="fu">fread</span>(<span class="st">&#39;data/day-5-example-lines.txt&#39;</span>, <span class="at">colClasses =</span> <span class="st">&#39;character&#39;</span>, </span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                             <span class="at">sep =</span> <span class="st">&#39;&#39;</span>, <span class="at">header =</span> <span class="cn">FALSE</span>)</span>
@@ -99,15 +99,16 @@ body {
 <span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    }))[, .N, .(X, Y)][N <span class="sc">&gt;</span> <span class="dv">1</span>, .N]</span>
 <span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="fu">chk_equal</span>({</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="fu">expect_equal</span>({</span>
 <span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    prep_eg_DT <span class="ot">&lt;-</span> <span class="fu">prep_text_lines</span>(eg_DT, point_cols)</span>
 <span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count_by_point</span>(prep_eg_DT)</span>
 <span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    },</span>
 <span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    <span class="dv">5</span></span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>prep_DT <span class="ot">&lt;-</span> <span class="fu">prep_text_lines</span>(DT, point_cols)</span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="fu">count_by_point</span>(prep_DT)</span></code></pre></div>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## ----- PASSED      : &lt;--&gt;
+##  call| eval(expr = expr, envir = envir)</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>prep_DT <span class="ot">&lt;-</span> <span class="fu">prep_text_lines</span>(DT, point_cols)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">count_by_point</span>(prep_DT)</span></code></pre></div>
 <pre><code>## [1] 5092</code></pre>
 <h2 id="part-two">Part two</h2>
 <p>Unfortunately, considering only horizontal and vertical lines doesn’t give you the full picture; you need to also consider diagonal lines.</p>
@@ -129,15 +130,16 @@ body {
 222111....</code></pre>
 <p>You still need to determine the number of points where at least two lines overlap. In the above example, this is still anywhere in the diagram with a 2 or larger - now a total of 12 points.</p>
 <p>Consider all of the lines. At how many points do at least two lines overlap?</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chk_equal</span>({</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    prep_eg_DT <span class="ot">&lt;-</span> <span class="fu">prep_text_lines</span>(eg_DT, point_cols, <span class="at">drop_diag =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count_by_point</span>(prep_eg_DT)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    },</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">12</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>prep_DT <span class="ot">&lt;-</span> <span class="fu">prep_text_lines</span>(DT, point_cols, <span class="at">drop_diag =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">count_by_point</span>(prep_DT)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">expect_equal</span>({</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    prep_eg_DT <span class="ot">&lt;-</span> <span class="fu">prep_text_lines</span>(eg_DT, point_cols, <span class="at">drop_diag =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count_by_point</span>(prep_eg_DT)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">12</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## ----- PASSED      : &lt;--&gt;
+##  call| eval(expr = expr, envir = envir)</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>prep_DT <span class="ot">&lt;-</span> <span class="fu">prep_text_lines</span>(DT, point_cols, <span class="at">drop_diag =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">count_by_point</span>(prep_DT)</span></code></pre></div>
 <pre><code>## [1] 20484</code></pre>
 
 </body>

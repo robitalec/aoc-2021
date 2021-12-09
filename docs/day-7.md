@@ -53,7 +53,7 @@ position?
 
 ``` r
 library(data.table)
-library(chk)
+library(tinytest)
 
 eg_DT <- c(16, 1, 2, 0, 4, 2, 7, 1, 2, 14)
 DT <- 
@@ -65,11 +65,16 @@ find_distances <- function(start_pos) {
     dists[, dist := abs(start_pos - pos)][, .(sum_dist = sum(dist)), pos]
 }
 
-chk_equal(
+expect_equal(
     find_distances(eg_DT)[sum_dist == min(sum_dist), pos],
     2
 )
+```
 
+    ## ----- PASSED      : <-->
+    ##  call| eval(expr = expr, envir = envir)
+
+``` r
 DT <- as.integer(strsplit(readLines('data/day-7-start.txt'), ',')[[1]])
 find_distances(DT)[sum_dist == min(sum_dist), sum_dist]
 ```
@@ -116,11 +121,16 @@ find_cumulative_distance <- function(start_pos) {
     dists[, .(sum_dist = sum(dist)), pos]
 }
 
-chk_equal(
+expect_equal(
     find_cumulative_distance(eg_DT)[sum_dist == min(sum_dist), pos],
     5
 )
+```
 
+    ## ----- PASSED      : <-->
+    ##  call| eval(expr = expr, envir = envir)
+
+``` r
 find_cumulative_distance(DT)[sum_dist == min(sum_dist), sum_dist]
 ```
 

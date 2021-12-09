@@ -59,7 +59,7 @@ body {
 <p>The score of the winning board can now be calculated. Start by finding the sum of all unmarked numbers on that board; in this case, the sum is 188. Then, multiply that sum by the number that was just called when the board won, 24, to get the final score, 188 * 24 = 4512.</p>
 <p>To guarantee victory against the giant squid, figure out which board will win first. What will your final score be if you choose that board?</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(chk)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tinytest)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Data</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>eg_draws <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">4</span>, <span class="dv">9</span>, <span class="dv">5</span>, <span class="dv">11</span>, <span class="dv">17</span>, <span class="dv">23</span>, <span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">14</span>, <span class="dv">21</span>, <span class="dv">24</span>, <span class="dv">10</span>, <span class="dv">16</span>, <span class="dv">13</span>, <span class="dv">6</span>,</span>
@@ -114,29 +114,32 @@ body {
 <span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a><span class="co"># Processing</span></span>
-<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a><span class="fu">chk_equal</span>({</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a><span class="fu">expect_equal</span>({</span>
 <span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>    eg_cards <span class="ot">&lt;-</span> <span class="fu">split_cards</span>(eg_DT, 5L)</span>
 <span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>    eg_wins <span class="ot">&lt;-</span> <span class="fu">vapply</span>(eg_cards, find_win, eg_draws, <span class="at">FUN.VALUE =</span> <span class="dv">42</span>)</span>
 <span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sum_win</span>(eg_wins, eg_cards, eg_draws)</span>
 <span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>    },</span>
 <span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>    <span class="dv">4512</span></span>
-<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>cards <span class="ot">&lt;-</span> <span class="fu">split_cards</span>(DT, 5L)</span>
-<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>wins <span class="ot">&lt;-</span> <span class="fu">vapply</span>(cards, find_win, draws, <span class="at">FUN.VALUE =</span> <span class="dv">42</span>)</span>
-<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a><span class="fu">sum_win</span>(wins, cards, draws)</span></code></pre></div>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## ----- PASSED      : &lt;--&gt;
+##  call| eval(expr = expr, envir = envir)</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>cards <span class="ot">&lt;-</span> <span class="fu">split_cards</span>(DT, 5L)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>wins <span class="ot">&lt;-</span> <span class="fu">vapply</span>(cards, find_win, draws, <span class="at">FUN.VALUE =</span> <span class="dv">42</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sum_win</span>(wins, cards, draws)</span></code></pre></div>
 <pre><code>## [1] 89001</code></pre>
 <h2 id="part-two">Part two</h2>
 <p>On the other hand, it might be wise to try a different strategy: let the giant squid win.</p>
 <p>You aren’t sure how many bingo boards a giant squid could play at once, so rather than waste time counting its arms, the safe thing to do is to figure out which board will win last and choose that one. That way, no matter which boards it picks, it will win for sure.</p>
 <p>In the above example, the second board is the last to win, which happens after 13 is eventually called and its middle column is completely marked. If you were to keep playing until this point, the second board would have a sum of unmarked numbers equal to 148 for a final score of 148 * 13 = 1924.</p>
 <p>Figure out which board will win last. Once it wins, what would its final score be?</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Processing</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">chk_equal</span>(</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sum_win</span>(eg_wins, eg_cards, eg_draws, <span class="at">strategy =</span> <span class="st">&#39;max&#39;</span>),</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1924</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">sum_win</span>(wins, cards, draws, <span class="at">strategy =</span> <span class="st">&#39;max&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Processing</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">expect_equal</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sum_win</span>(eg_wins, eg_cards, eg_draws, <span class="at">strategy =</span> <span class="st">&#39;max&#39;</span>),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1924</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## ----- PASSED      : &lt;--&gt;
+##  call| eval(expr = expr, envir = envir)</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum_win</span>(wins, cards, draws, <span class="at">strategy =</span> <span class="st">&#39;max&#39;</span>)</span></code></pre></div>
 <pre><code>## [1] 7296</code></pre>
 
 </body>

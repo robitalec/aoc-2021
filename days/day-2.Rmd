@@ -40,7 +40,7 @@ Your horizontal position and depth both start at 0. The steps above would then m
 
 ```{r}
 library(data.table)
-library(chk)
+library(tinytest)
 
 col_names <- c('command', 'dist')
 
@@ -53,7 +53,7 @@ horizontal_times_depth <- function(DT) {
 	depth_sum <- DT[command != 'forward', sum(dist)]
 	return(horizontal_sum * depth_sum)
 }
-chk_equal(
+expect_equal(
 	horizontal_times_depth(eg_DT),
 	150
 )
@@ -88,7 +88,7 @@ Using this new interpretation of the commands, calculate the horizontal position
 
 ```{r}
 library(data.table)
-library(chk)
+library(tinytest)
 
 col_names <- c('command', 'dist')
 
@@ -105,7 +105,7 @@ horizontal_times_depth_with_aim <- function(DT) {
 }
 horizontal_times_depth_with_aim(eg_DT)
 
-chk_equal(
+expect_equal(
 	horizontal_times_depth_with_aim(eg_DT),
 	900
 )

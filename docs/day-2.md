@@ -35,7 +35,7 @@ would then modify them as follows:
 
 ``` r
 library(data.table)
-library(chk)
+library(tinytest)
 
 col_names <- c('command', 'dist')
 
@@ -48,10 +48,16 @@ horizontal_times_depth <- function(DT) {
     depth_sum <- DT[command != 'forward', sum(dist)]
     return(horizontal_sum * depth_sum)
 }
-chk_equal(
+expect_equal(
     horizontal_times_depth(eg_DT),
     150
 )
+```
+
+    ## ----- PASSED      : <-->
+    ##  call| eval(expr = expr, envir = envir)
+
+``` r
 horizontal_times_depth(DT)
 ```
 
@@ -98,7 +104,7 @@ final depth?
 
 ``` r
 library(data.table)
-library(chk)
+library(tinytest)
 
 col_names <- c('command', 'dist')
 
@@ -119,11 +125,16 @@ horizontal_times_depth_with_aim(eg_DT)
     ## [1] 900
 
 ``` r
-chk_equal(
+expect_equal(
     horizontal_times_depth_with_aim(eg_DT),
     900
 )
+```
 
+    ## ----- PASSED      : <-->
+    ##  call| eval(expr = expr, envir = envir)
+
+``` r
 horizontal_times_depth_with_aim(DT)
 ```
 

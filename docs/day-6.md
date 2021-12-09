@@ -80,7 +80,7 @@ Find a way to simulate lanternfish. How many lanternfish would there be
 after 80 days?
 
 ``` r
-library(chk)
+library(tinytest)
 
 get_transitions <- function() {
     m <- matrix(0, nrow = 9, ncol = 9)
@@ -116,21 +116,30 @@ count_total <- function(init, t_steps, transitions) {
 }
 
 
-chk_equal({
+expect_equal({
     init <- c(0, 0, 0, 0, 1, 2, 1, 1, 0)
     count_total(init, 18, get_transitions())
     },
     26
 )
+```
 
-chk_equal({
+    ## ----- PASSED      : <-->
+    ##  call| eval(expr = expr, envir = envir)
+
+``` r
+expect_equal({
     init <- c(0, 0, 0, 0, 1, 2, 1, 1, 0)
     count_total(init, 80, get_transitions())
     },
     5934
 )
+```
 
+    ## ----- PASSED      : <-->
+    ##  call| eval(expr = expr, envir = envir)
 
+``` r
 init <- c(2,3,1,3,4,4,1,5,2,3,1,1,4,5,5,3,5,5,4,1,2,1,1,1,1,1,1,4,1,1,1,4,1,3,1,4,1,1,4,1,3,4,5,1,1,5,3,4,3,4,1,5,1,3,1,1,1,3,5,3,2,3,1,5,2,2,1,1,4,1,1,2,2,2,2,3,2,1,2,5,4,1,1,1,5,5,3,1,3,2,2,2,5,1,5,2,4,1,1,3,3,5,2,3,1,2,1,5,1,4,3,5,2,1,5,3,4,4,5,3,1,2,4,3,4,1,3,1,1,2,5,4,3,5,3,2,1,4,1,4,4,2,3,1,1,2,1,1,3,3,3,1,1,2,2,1,1,1,5,1,5,1,4,5,1,5,2,4,3,1,1,3,2,2,1,4,3,1,1,1,3,3,3,4,5,2,3,3,1,3,1,4,1,1,1,2,5,1,4,1,2,4,5,4,1,5,1,5,5,1,5,5,2,5,5,1,4,5,1,1,3,2,5,5,5,4,3,2,5,4,1,1,2,4,4,1,1,1,3,2,1,1,2,1,2,2,3,4,5,4,1,4,5,1,1,5,5,1,4,1,4,4,1,5,3,1,4,3,5,3,1,3,1,4,2,4,5,1,4,1,2,4,1,2,5,1,1,5,1,1,3,1,1,2,3,4,2,4,3,1)
 
 tabbed <- c(0, 0, 0, rev(table(init)), 0)

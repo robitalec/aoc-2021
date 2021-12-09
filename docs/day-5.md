@@ -60,7 +60,7 @@ least two lines overlap?
 
 ``` r
 library(data.table)
-library(chk)
+library(tinytest)
 
 eg_DT <- fread('data/day-5-example-lines.txt', colClasses = 'character', 
                              sep = '', header = FALSE)
@@ -100,13 +100,18 @@ count_by_point <- function(DT) {
     }))[, .N, .(X, Y)][N > 1, .N]
 }
 
-chk_equal({
+expect_equal({
     prep_eg_DT <- prep_text_lines(eg_DT, point_cols)
     count_by_point(prep_eg_DT)
     },
     5
 )
+```
 
+    ## ----- PASSED      : <-->
+    ##  call| eval(expr = expr, envir = envir)
+
+``` r
 prep_DT <- prep_text_lines(DT, point_cols)
 count_by_point(prep_DT)
 ```
@@ -147,13 +152,18 @@ Consider all of the lines. At how many points do at least two lines
 overlap?
 
 ``` r
-chk_equal({
+expect_equal({
     prep_eg_DT <- prep_text_lines(eg_DT, point_cols, drop_diag = FALSE)
     count_by_point(prep_eg_DT)
     },
     12
 )
+```
 
+    ## ----- PASSED      : <-->
+    ##  call| eval(expr = expr, envir = envir)
+
+``` r
 prep_DT <- prep_text_lines(DT, point_cols, drop_diag = FALSE)
 count_by_point(prep_DT)
 ```
